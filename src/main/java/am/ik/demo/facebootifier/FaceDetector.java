@@ -21,7 +21,7 @@ public class FaceDetector {
 
     static {
         try {
-            URL url = new ClassPathResource("haarcascade_frontalface_default.xml").getURL();
+            URL url = new ClassPathResource("haarcascade_frontalface_alt.xml").getURL();
             classifierFile = Loader.extractResource(url, null, "classifier", ".xml");
             classifierFile.deleteOnExit();
         } catch (Exception e) {
