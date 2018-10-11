@@ -1,0 +1,4 @@
+applications:
+- name: face-bootifier
+  memory: 768m
+  path: target/face-bootifier-0.0.1-SNAPSHOT.jar
