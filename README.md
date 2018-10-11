@@ -30,3 +30,7 @@ riff function create java face-bootifier \
   --image ${DOCKER_USERNAME}/face-bootifier \
   --verbose
 ```
+
+```
+base64 -i ./lena.png | riff service invoke face-bootifier --text -- -d @- | awk 'NR>1 {print}' | base64 -D >  after.png
+```
