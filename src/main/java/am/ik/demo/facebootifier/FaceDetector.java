@@ -2,6 +2,7 @@ package am.ik.demo.facebootifier;
 
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_core.RectVector;
 import org.bytedeco.javacpp.opencv_objdetect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class FaceDetector {
 
     public void detectFaces(opencv_core.Mat source,
                             BiConsumer<opencv_core.Mat, opencv_core.Rect> detectAction) {
-        opencv_core.RectVector faces = new opencv_core.RectVector();
+        RectVector faces = new RectVector();
         classifier.detectMultiScale(source, faces, 1.1, 3,
                 CV_HAAR_FIND_BIGGEST_OBJECT | CV_HAAR_DO_ROUGH_SEARCH, null, null);
         long numOfFaces = faces.size();
