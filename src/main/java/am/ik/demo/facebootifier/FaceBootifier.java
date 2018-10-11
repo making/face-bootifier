@@ -1,8 +1,8 @@
 package am.ik.demo.facebootifier;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
+import org.bytedeco.javacpp.opencv_core.Rect;
 import org.bytedeco.javacpp.opencv_core.Scalar;
 
 import java.io.ByteArrayInputStream;
@@ -45,7 +45,7 @@ public class FaceBootifier implements Function<String, byte[]> {
     }
 
 
-    public static void bootify(Mat source, opencv_core.Rect r) {
+    public static void bootify(Mat source, Rect r) {
         int x = r.x(), y = r.y(), w = r.width();
         int a = (int) (w / 2 * Math.cos(Math.PI / 3));
         int h = (int) (w * Math.sin(Math.PI / 3));
