@@ -1,5 +1,7 @@
 package am.ik.demo.facebootifier;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.Point;
 import org.bytedeco.javacpp.opencv_core.Rect;
@@ -16,9 +18,19 @@ import java.util.function.Function;
 
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imwrite;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
+import static org.bytedeco.javacpp.opencv_imgproc.CV_AA;
+import static org.bytedeco.javacpp.opencv_imgproc.circle;
+import static org.bytedeco.javacpp.opencv_imgproc.fillConvexPoly;
+import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
 
 public class FaceBootifier implements Function<String, byte[]> {
+
+    private final Counter counter;
+
+    public FaceBootifier(MeterRegistry meterRegistry) {
+        this.counter = meterRegistry.counter("bootified.count");
+    }
+
     @Override
     public byte[] apply(String s) {
         try {
@@ -29,12 +41,12 @@ public class FaceBootifier implements Function<String, byte[]> {
                 input.toFile().deleteOnExit();
                 output.toFile().deleteOnExit();
                 Files.copy(stream, input, StandardCopyOption.REPLACE_EXISTING);
-                FaceDetector faceDetector = new FaceDetector();
+                FaceDetector faceDetector = new FaceDetector(counter);
                 Mat source = imread(input.toAbsolutePath().toString());
                 faceDetector.detectFaces(source, FaceBootifier::bootify);
                 imwrite(output.toFile().getAbsolutePath(), source);
                 byte[] bootified = Base64.getEncoder()
-                        .encode(Files.readAllBytes(output));
+                    .encode(Files.readAllBytes(output));
                 Files.deleteIfExists(input);
                 Files.deleteIfExists(output);
                 return bootified;
@@ -62,15 +74,15 @@ public class FaceBootifier implements Function<String, byte[]> {
         fillConvexPoly(source, points.position(0), 6, Scalar.GREEN, CV_AA, 0);
 
         circle(source, new Point(x + w / 2, y + w / 2), w / 4,
-                Scalar.WHITE, -1, CV_AA, 0);
+            Scalar.WHITE, -1, CV_AA, 0);
         circle(source, new Point(x + w / 2, y + w / 2), w / 6,
-                Scalar.GREEN, -1, CV_AA, 0);
+            Scalar.GREEN, -1, CV_AA, 0);
 
         rectangle(source, new Point(x + w / 2 - w / 12, y + w / 5),
-                new Point(x + w / 2 + w / 12, y + w / 2),
-                Scalar.GREEN, -1, CV_AA, 0);
+            new Point(x + w / 2 + w / 12, y + w / 2),
+            Scalar.GREEN, -1, CV_AA, 0);
         rectangle(source, new Point(x + w / 2 - w / 20, y + w / 5),
-                new Point(x + w / 2 + w / 20, y + w / 2),
-                Scalar.WHITE, -1, CV_AA, 0);
+            new Point(x + w / 2 + w / 20, y + w / 2),
+            Scalar.WHITE, -1, CV_AA, 0);
     }
 }
